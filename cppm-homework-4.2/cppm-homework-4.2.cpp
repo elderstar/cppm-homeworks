@@ -16,7 +16,7 @@ public:
     }
 
     Address() {
-        city = "";
+        city = "city";
         address = "";
         building = 0;
         apt = 0;
@@ -52,15 +52,29 @@ void readFile(std::ifstream& input_file, Address** arr_of_addresses, int address
         {
             getline(input_file, address_arr[j]);
         }
-
         arr_of_addresses[i] = new Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
     }
 }
 
-int comp(Address* i, Address* j) {
+void sort(Address** arr_of_addresses, int size)
+{
+    Address * temp = new Address();
 
-    return i->getCity() < j->getCity();
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size - 1; ++j) {
+            if (arr_of_addresses[j]->getCity() > arr_of_addresses[j + 1]->getCity()) {
+                temp = arr_of_addresses[j];
+                arr_of_addresses[j] = arr_of_addresses[j + 1];
+                arr_of_addresses[j + 1] = temp;
+            }
+        }
+    }
 }
+
+//int comp(Address* i, Address* j) {
+//
+//    return i->getCity() < j->getCity();
+//}
 
 int main()
 {
@@ -92,8 +106,9 @@ int main()
 
                 output_file << addresses_count;
 
-                std::sort(arr_of_addresses, arr_of_addresses + addresses_count, comp);
-                    
+                sort(arr_of_addresses, addresses_count);
+                //std::sort(arr_of_addresses, arr_of_addresses + addresses_count, comp);
+
                 for (int i = 0; i < addresses_count; ++i) {
 
                     output_file << "\n" << arr_of_addresses[i]->getOutputAddress();
