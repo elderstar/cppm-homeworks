@@ -14,17 +14,17 @@ public:
 
     void subtract() {
     
-        std::cout << --this->start_value << "\n";
+        std::cout << --start_value << "\n";
     }
 
     void add() {
 
-        std::cout << ++this->start_value << "\n";
+        std::cout << ++start_value << "\n";
     }
 
     void printVal() {
 
-        std::cout << this->start_value << "\n";
+        std::cout << start_value << "\n";
     }
 private:
 
