@@ -12,19 +12,22 @@ public:
     };
     ~Counter() {};
 
-    void subtract() {
+    int subtract() {
     
-        std::cout << --start_value << "\n";
+        return --start_value;
+        //std::cout << --start_value << "\n";   //  испрвление замечания, методы add\sub не должны выводить на печать.
     }
 
-    void add() {
+    int add() {
 
-        std::cout << ++start_value << "\n";
+        return ++start_value;
+        //std::cout << ++start_value << "\n";
     }
 
-    void printVal() {
+    int getVal() {
 
-        std::cout << start_value << "\n";
+        return start_value;
+        //std::cout << start_value << "\n";
     }
 private:
 
@@ -41,13 +44,14 @@ void count(Counter& counter)
         std::cin >> command;
         switch (command) {
         case '+':
-            counter.add();
+            std::cout << counter.add() << "\n";
+            //counter.add();
             break;
         case '-':
-            counter.subtract();
+            std::cout << counter.subtract() << "\n";
             break;
         case '=':
-            counter.printVal();
+            std::cout << counter.getVal() << "\n";
             break;
         }
     } while (command != 'x');
