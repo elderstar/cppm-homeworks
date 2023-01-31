@@ -36,7 +36,7 @@ private:
     int apt;
 };
 
-void readFile(std::ifstream& input_file, Address** arr_of_addresses, int addresses_count)
+void readFile(std::ifstream& input_file, Address* arr_of_addresses, int addresses_count)
 {
     std::string address_arr[4];
 
@@ -47,7 +47,8 @@ void readFile(std::ifstream& input_file, Address** arr_of_addresses, int address
             getline(input_file, address_arr[j]);
         }
 
-        arr_of_addresses[i] = new Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
+        //arr_of_addresses[i] = new Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
+        arr_of_addresses[i] = Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
     }
 }
 
@@ -66,8 +67,8 @@ int main()
     while (getline(input_file, str)) {
         if (!input_file.eof()) {
             int addresses_count = std::stoi(str);
-            Address** arr_of_addresses = new Address*[addresses_count];
-
+            //Address** arr_of_addresses = new Address*[addresses_count];   // вместо массива указателей можно сделать проще...
+            Address* arr_of_addresses = new Address [addresses_count];  // сразу массив адресов
             if (addresses_count < 1) {
                 std::cout << "Unexpected input data. Correct input file.";
                 return 0;
@@ -83,11 +84,11 @@ int main()
 
                 for (int i = 0; i < addresses_count; ++i) {
 
-                    output_file << "\n" << arr_of_addresses[i]->getOutputAddress();
-                    delete arr_of_addresses[i];     // сразу удаляю под массив чтобы не создавать для этого еще новый цикл
+                    output_file << "\n" << arr_of_addresses[i].getOutputAddress();
+                    //delete arr_of_addresses[i];     // сразу удаляю под массив чтобы не создавать для этого еще новый цикл(теперь удалять в цикле нечего)
                 }
                 output_file.close();
-                delete [] arr_of_addresses;
+                delete [] arr_of_addresses; // сразу удаляю массив адресов
                 arr_of_addresses = nullptr;
             }
         }

@@ -42,7 +42,7 @@ private:
     int apt;
 };
 
-void readFile(std::ifstream& input_file, Address** arr_of_addresses, int addresses_count)
+void readFile(std::ifstream& input_file, Address* arr_of_addresses, int addresses_count)
 {
     std::string address_arr[4];
 
@@ -52,17 +52,17 @@ void readFile(std::ifstream& input_file, Address** arr_of_addresses, int address
         {
             getline(input_file, address_arr[j]);
         }
-        arr_of_addresses[i] = new Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
+        arr_of_addresses[i] = Address(address_arr[0], address_arr[1], stoi(address_arr[2]), stoi(address_arr[3]));
     }
 }
 
-void sort(Address** arr_of_addresses, int size)
+void sort(Address* arr_of_addresses, int size)
 {
-    Address * temp = new Address();
+    Address temp = Address();
 
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size - 1; ++j) {
-            if (arr_of_addresses[j]->getCity() > arr_of_addresses[j + 1]->getCity()) {
+            if (arr_of_addresses[j].getCity() > arr_of_addresses[j + 1].getCity()) {
                 temp = arr_of_addresses[j];
                 arr_of_addresses[j] = arr_of_addresses[j + 1];
                 arr_of_addresses[j + 1] = temp;
@@ -91,7 +91,7 @@ int main()
     while (getline(input_file, str)) {
         if (!input_file.eof()) {
             int addresses_count = std::stoi(str);
-            Address** arr_of_addresses = new Address * [addresses_count];
+            Address* arr_of_addresses = new Address [addresses_count];
 
             if (addresses_count < 1) {
                 std::cout << "Unexpected input data. Correct input file.";
@@ -111,8 +111,7 @@ int main()
 
                 for (int i = 0; i < addresses_count; ++i) {
 
-                    output_file << "\n" << arr_of_addresses[i]->getOutputAddress();
-                    delete arr_of_addresses[i];     // сразу удаляю под массив чтобы не создавать для этого еще новый цикл
+                    output_file << "\n" << arr_of_addresses[i].getOutputAddress();
                 }
                 output_file.close();
                 delete[] arr_of_addresses;
