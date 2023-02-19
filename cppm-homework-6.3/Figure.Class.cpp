@@ -3,7 +3,7 @@
 Figure::Figure()
 {
 	side_count = 0;
-	name = "Фигура";
+	name = "”игура";
 }
 
 int Figure::getSideCount()
