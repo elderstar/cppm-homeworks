@@ -11,6 +11,8 @@
 #include "GroundClass.h"
 #include "MagicCarpetClass.h"
 #include "VehicleClass.h"
+#include <type_traits>
+#include <typeinfo>
 
 class Race {
 
@@ -20,6 +22,14 @@ public:
 		title = "Гонка для наземного и воздушного транспорта";
 	};
 	~Race() {};
+	Race* getParChildPtr() {
+		return par_child;
+	}
+
+	void setParChildPtr(Race* _par_child) {
+		par_child = _par_child;
+	}
+
 	bool checkNewParticipant(Vehicle*& participants, std::unique_ptr<Vehicle>& vehicle, size_t& participants_count) {
 		std::string new_participant_name = vehicle->getVehicleName();
 
@@ -30,11 +40,17 @@ public:
 		return true;
 	}
 
+	bool virtual checkVehicleType(std::unique_ptr<Vehicle>& vehicle) {
+		return true;
+	}
+
 	Vehicle* registerVehicle(Vehicle*& participants, std::unique_ptr<Vehicle>& vehicle, size_t& participants_count) {
 
 		if (!checkNewParticipant(participants, vehicle, participants_count))
 			throw std::domain_error(vehicle->getVehicleName() + " уже зрегистрирован!");
-
+		if(!this->getParChildPtr()->checkVehicleType(vehicle))
+			throw std::domain_error("Попытка зарегистрировать неправильный тип транспортного средства!");
+		
 		vehicle->setParChildPtr(&vehicle);
 
 		if (participants_count > 0) {
@@ -76,6 +92,8 @@ public:
 protected:
 	unsigned int length;
 	std::string title;
+	Race* par_child;
+
 };
 
 class GroundRace : public Race {
@@ -85,8 +103,18 @@ public:
 		title = "Гонка для наземного транспорта";
 	};
 	~GroundRace() {};
-private:
+	
+	bool checkVehicleType(std::unique_ptr<Vehicle>& vehicle) override {
+		
+		if (dynamic_cast<Ground*>(&*vehicle)) {
+			return true;
+		}
+		else {
+			return false;
+		};
+	}
 
+private:
 };
 
 class AirRace : public Race {
@@ -96,6 +124,16 @@ public:
 		title = "Гонка для воздушного транспорта";
 	};
 	~AirRace() {};
+
+	bool checkVehicleType(std::unique_ptr<Vehicle>& vehicle) override {
+		
+		if (dynamic_cast<Aircraft*>(&*vehicle)) {
+			return true;
+		}
+		else {
+			return false;
+		};
+	}
 private:
 
 };
@@ -171,7 +209,11 @@ void start() {
 	vehicles.push_back(std::make_unique<MagicCarpet>());
 
 	Race race;
+	GroundRace ground_race;
+	AirRace air_race;
+
 	bool raceCreated = false;
+	int raceType = 0;
 
 	while (!raceCreated) {
 		std::cout << "1. Гонка для наземного транспорта" << "\n";
@@ -180,30 +222,41 @@ void start() {
 		std::cout << "Выберите тип гонки: ";
 
 		std::getline(std::cin, input);
-		int raceType = 0;
+		
 
 		if (input != "" && isNumber(input))
 		{
 			raceType = stoi(input);
+			break;
 		}
-		switch (raceType) {
-		case 1:
-			race = GroundRace();
-			raceCreated = true;
-			break;
-		case 2:
-			race = AirRace();
-			raceCreated = true;
-			break;
-		case 3:
-			race = Race();
-			raceCreated = true;
-			break;
-		default:
-			clearConsole();
-		}
-
+		
 	}
+
+	switch (raceType) {
+	case 1:
+	{
+		race.setParChildPtr(&ground_race);
+		air_race.~AirRace();
+		break;
+	}
+	case 2:
+	{
+		race.setParChildPtr(&air_race);
+		ground_race.~GroundRace();
+		break;
+	}
+	case 3:
+	{
+		race.setParChildPtr(&race);
+		ground_race.~GroundRace();
+		air_race.~AirRace();
+		break;
+	}
+	default:
+		clearConsole();
+	}
+
+	//race.setParChildPtr(&race);
 
 	while (true) {
 		clearConsole();
@@ -237,12 +290,7 @@ void start() {
 				clearConsole();
 				bool finish_registration = false;
 				while (!finish_registration) {
-					clearConsole();
 
-					if (participants_count > 0)
-					{
-						std::cout << ptr_participantList[participants_count - 1].getVehicleName() << " успешно зарегистрирован!" << "\n";
-					}
 					std::cout << race.getTitle() << ". Расстояние: " << race.getLength() << "\n";
 
 					if (participants_count > 0)
@@ -271,8 +319,10 @@ void start() {
 								break;
 							}
 							if (answer > 0 && answer < 8) {
+								clearConsole();
 								try {
 									ptr_participantList = race.registerVehicle(ptr_participantList, vehicles[answer - 1], participants_count);
+									std::cout << ptr_participantList[participants_count - 1].getVehicleName() << " успешно зарегистрирован!" << "\n";
 								}
 								catch (std::exception e) {
 									std::cout << e.what() << "\n";
@@ -292,9 +342,9 @@ void start() {
 					ptr_participantList[i].setResult((*ptr_participantList[i].getParChildPtr())->calculateMovementTime(race.getLength()));
 				}
 
-				
+
 				sortBubble(&ptr_participantList, participants_count);
-				
+
 				for (int i = 0; i < participants_count; ++i) {
 
 					std::cout << i + 1 << ". " << ptr_participantList[i].getVehicleName() << ". Время: " << ptr_participantList[i].getResult() << "\n";
