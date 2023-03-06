@@ -1,5 +1,14 @@
 ﻿#include <iostream>
-#include "Figures.h"
+#include "Figure.h"
+#include "Triangle.h"
+#include "RightTriangle.h"
+#include "IsoscelesTriangle.h"
+#include "EquilateralTriangle.h"
+#include "Quadrilateral.h"
+#include "Rectangle.h"
+#include "Square.h"
+#include "Rhombus.h"
+#include "Parallelogram.h"
 
 void print_info(Figure* figure) {
 
