@@ -1,6 +1,7 @@
 #include "VehicleClass.h"
 #include <vector>
 #include <iostream>
+
 Vehicle::Vehicle() {
 	velocity = 0;
 };
