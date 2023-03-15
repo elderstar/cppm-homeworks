@@ -163,10 +163,12 @@ int start(std::string& input, Race& race, std::vector<std::unique_ptr<Vehicle>>&
 					if (input != "" && isNumber(input))
 					{
 						if (stoi(input) == 2) {
+							delete[] ptr_participantList;
 							exit(0);
 						}
 						else if (stoi(input) == 1) {
 							participants_count = 0;
+							delete[] ptr_participantList;
 							ptr_participantList = new Vehicle[participants_count];
 							clearConsole();
 							return 0;
